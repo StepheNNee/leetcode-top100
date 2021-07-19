@@ -1,0 +1,61 @@
+解法一：暴力枚举，双循环遍历，时间复杂度O(N2)
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        for(int i = 0; i < nums.size(); i++)
+        {
+            for(int j = i + 1; j < nums.size(); j++)
+            {
+                if(nums[i] + nums[j] == target)
+                    return {i,j};
+            }
+        }
+        return {-1,-1};
+    }
+};
+解法二：哈希表,时间复杂度O(N),哈希表查找时间复杂度为常数
+在插入哈希表之前先查找表里是否已经有满足条件的值，没有则执行插入操作。
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> ht;//<key,value><first,second>
+        int n = nums.size();
+        for(int i = 0; i < n; i++)
+        {
+            auto it = ht.find(target - nums[i]);
+            if(it != ht.end())
+                return {it->second, i};
+            else
+                ht.insert(pair<int,int>(nums[i], i));//使用pair和insert插入
+                //ht[nums[i]]=i;//使用[ ]进行单个插入
+        }
+        return {-1,-1};
+    }
+};
+解法三：先排序然后双指针，时间复杂度O(NlogN)，排序时间复杂度是O(NlogN)，查找时间复杂度是O(N)
+先复制原数组，度复制后的数组进行排序，然后利用双指针查找，最后还原值在原数组中的位置。
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        vector<int>sortNums = nums;
+        sort(sortNums.begin(), sortNums.end());
+        int left = 0, right = sortNums.size() -1;
+        while(left < right){
+            if(sortNums[left] + sortNums[right] < target)
+                left++;
+            else if(sortNums[left] + sortNums[right] > target)
+                right--;
+            else
+                break;
+        }
+        int x = -1, y = -1;
+        for(int k = 0; k < nums.size(); k++)
+        {
+            if(nums[k] == sortNums[left] && x == -1)//考虑[3,3] 6的情况，控制x只能改变一次。
+                x = k;
+            if(nums[k] == sortNums[right])
+                y = k;
+        }
+        return {x, y};
+    }
+};
