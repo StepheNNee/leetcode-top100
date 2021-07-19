@@ -1,0 +1,53 @@
+解法一：滑动窗口。
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        int left = 0, right = 0, ans = 0, length = 0;
+        int n = s.size();
+        //right指针移动到数组末尾结束
+        while(right < n)
+        {
+            char temp = s[right];
+            //每次移动时判断窗口[left,right)之间是否有重复的元素
+            for(int i = left; i < right; i++)
+            {
+                if(temp == s[i])
+                {
+                    left = i + 1;
+                    length = right - left;
+                    break;//只可能有一个重复
+                }
+            }
+            right++;
+            length++;
+            ans = max(ans,length);
+        }
+        return ans;
+
+    }
+};
+
+
+解法二：将哈希表用作队列，滑动窗口
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        unordered_set<char> c;
+        int n = s.size();
+        if(!n) return 0;//判断字符串是否为空
+        int left = 0;
+        int ans = 0;
+        for(int i = 0; i < n; i++)
+        {
+            //如果插入的元素哈希表中存在，则移除左端的元素直至哈希表中不含重复元素
+            while(c.find(s[i]) != c.end())
+                {
+                    c.erase(s[left]);
+                    left++;
+                }
+            c.insert(s[i]);//插入新的元素
+            ans = max(ans, i - left + 1);//计算一次哈希表的大小    
+        }
+        return ans;
+    }
+};
